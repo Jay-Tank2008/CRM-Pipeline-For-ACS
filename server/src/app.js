@@ -34,9 +34,25 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
+let adminSeeded = false;
+
 app.use(async (req, res, next) => {
   try {
     await connectDB();
+    if (!adminSeeded) {
+      adminSeeded = true;
+      const existingAdmin = await User.findOne({ role: "admin" });
+      if (!existingAdmin) {
+        const hash = await bcrypt.hash("AcsAdmin@2026", 10);
+        await User.create({
+          name: "ACS Admin",
+          email: "admin@acsenergy.in",
+          passwordHash: hash,
+          role: "admin",
+        });
+        console.log("Default admin seeded: admin@acsenergy.in / AcsAdmin@2026");
+      }
+    }
     next();
   } catch (err) {
     console.error("DB connection failed", err);
@@ -72,18 +88,6 @@ app.use((err, req, res, next) => {
 
 export const startServer = async () => {
   await connectDB();
-
-  const existingAdmin = await User.findOne({ role: "admin" });
-  if (!existingAdmin) {
-    const hash = await bcrypt.hash("AcsAdmin@2026", 10);
-    await User.create({
-      name: "ACS Admin",
-      email: "admin@acsenergy.in",
-      passwordHash: hash,
-      role: "admin",
-    });
-    console.log("Default admin seeded: admin@acsenergy.in / AcsAdmin@2026");
-  }
 
   const port = process.env.PORT || 5000;
   app.listen(port, () => {
