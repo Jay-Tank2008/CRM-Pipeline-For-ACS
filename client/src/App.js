@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import acsLogo from './assets/acs-logo.png';
 
-const API_BASE = process.env.REACT_APP_API_BASE || 'https://server-nine-olive-75.vercel.app';
+const API_BASE = process.env.REACT_APP_API_BASE || 'https://crm-pipeline-for-dvv7e84w3-jaytank2008-1553s-projects.vercel.app';
 const STAGES = ['New', 'Qualified', 'Meeting Booked', 'Proposal Sent', 'Won', 'Lost'];
 
 function useAuth() {
